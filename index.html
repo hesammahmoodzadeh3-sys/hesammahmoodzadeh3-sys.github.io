@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>جنگ ادمکی ریاضی (بات‌دار)</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
+  body { background: linear-gradient(135deg, #8b0000, #4a0000); min-height: 100vh; padding: 10px; color: #fff; }
+  .container { max-width: 500px; margin: 0 auto; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .login-box { background: rgba(0,0,0,0.4); border-radius: 16px; padding: 25px; margin-top: 30px; border: 2px solid rgba(255,255,255,0.2); }
+  .login-box h2 { text-align: center; font-size: 22px; margin-bottom: 20px; color: #ffd700; }
+  .login-box input, .login-box textarea { width: 100%; padding: 14px; margin-bottom: 12px; border: 2px solid rgba(255,255,255,0.3); border-radius: 10px; background: rgba(255,255,255,0.1); color: #fff; font-size: 16px; font-family: inherit; }
+  .login-box input::placeholder, .login-box textarea::placeholder { color: rgba(255,255,255,0.6); }
+  .login-box input:focus, .login-box textarea:focus { outline: none; border-color: #ffd700; }
+  .login-box button { width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 17px; font-weight: bold; cursor: pointer; margin-bottom: 10px; font-family: inherit; }
+  .btn-green { background: #2ecc71; color: #fff; }
+  .btn-gold { background: transparent; color: #ffd700; border: 2px solid #ffd700 !important; }
+  .btn-red { background: #e74c3c; color: #fff; }
+  .btn-blue { background: #3498db; color: #fff; }
+  .btn-purple { background: #9b59b6; color: #fff; }
+  .msg { border-radius: 8px; padding: 10px; text-align: center; font-size: 14px; margin-bottom: 12px; display: none; }
+  .msg.show { display: block; }
+  .msg.error { background: rgba(231,76,60,0.6); }
+  .msg.success { background: rgba(46,204,113,0.6); }
+  h1 { text-align: center; font-size: 20px; margin: 10px 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); }
+  .user-bar { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.15); border-radius: 10px; padding: 8px 14px; margin-bottom: 8px; font-size: 14px; }
+  .user-bar .username { color: #ffd700; font-weight: bold; }
+  .menu-btn { background: #f39c12; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 16px; cursor: pointer; font-family: inherit; font-weight: bold; position: relative; }
+  .notif-dot { position: absolute; top: -5px; right: -5px; background: #e74c3c; width: 12px; height: 12px; border-radius: 50%; display: none; }
+  .user-bar .logout { background: rgba(231,76,60,0.7); color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer; font-family: inherit; font-weight: bold; }
+  .stats { display: flex; justify-content: space-around; background: rgba(255,255,255,0.1); border-radius: 10px; padding: 10px; margin-bottom: 8px; font-size: 12px; }
+  .stats div { text-align: center; }
+  .stats .num { color: #ffd700; font-size: 16px; font-weight: bold; display: block; }
+  .score-bar { display: flex; justify-content: space-between; background: rgba(255,255,255,0.15); border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; font-size: 15px; font-weight: bold; }
+  .score-bar .score { color: #ffd700; font-size: 17px; }
+  .battlefield { display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 16px 8px; margin-bottom: 10px; border: 2px solid rgba(255,255,255,0.2); }
+  .side { text-align: center; flex: 1; }
+  .side .label { font-size: 12px; margin-bottom: 4px; opacity: 0.9; }
+  .side .emoji { font-size: 34px; margin: 6px 0; }
+  .side .expr { font-size: 15px; font-weight: bold; background: rgba(255,255,255,0.2); padding: 6px 8px; border-radius: 8px; margin-top: 6px; }
+  .side.you .expr { background: rgba(0,150,0,0.4); }
+  .side.enemy .expr { background: rgba(200,0,0,0.4); }
+  .vs { font-size: 20px; font-weight: bold; color: #ffd700; padding: 0 6px; }
+  .question { background: #fff; color: #333; border-radius: 12px; padding: 16px; text-align: center; font-size: 15px; font-weight: bold; margin-bottom: 10px; line-height: 1.7; }
+  .buttons { display: flex; gap: 8px; margin-bottom: 10px; }
+  .btn { flex: 1; padding: 14px; border: none; border-radius: 12px; font-size: 16px; font-weight: bold; cursor: pointer; font-family: inherit; }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn.attack { background: #2ecc71; color: #fff; }
+  .btn.retreat { background: #e74c3c; color: #fff; }
+  .message { background: rgba(255,255,255,0.15); border-radius: 10px; padding: 12px; text-align: center; font-size: 14px; font-weight: bold; min-height: 50px; display: flex; align-items: center; justify-content: center; line-height: 1.6; }
+  .message.win { background: rgba(46,204,113,0.4); }
+  .message.lose { background: rgba(231,76,60,0.4); }
+  .message.draw { background: rgba(241,196,15,0.4); }
+  .restart { width: 100%; padding: 12px; background: #667eea; color: #fff; border: none; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 10px; font-family: inherit; }
+  
+  .user-list-item { background: rgba(255,255,255,0.1); padding: 12px 14px; border-radius: 8px; margin-bottom: 8px; display: flex; flex-direction: column; border: 1px solid rgba(255,255,255,0.2); gap: 8px; }
+  .user-list-item .header { display: flex; justify-content: space-between; align-items: center; font-weight: bold; font-size: 15px; }
+  .user-list-item .actions { display: flex; gap: 5px; flex-wrap: wrap; }
+  .user-list-item .manage-btn { background: #34495e; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; font-size: 13px; cursor: pointer; font-family: inherit; font-weight: bold; }
+  
+  .msg-bubble { padding: 10px; border-radius: 10px; margin-bottom: 5px; font-size: 14px; line-height: 1.5; }
+  .msg-user { background: rgba(52, 152, 219, 0.3); border-left: 4px solid #3498db; }
+  .msg-admin { background: rgba(231, 76, 60, 0.3); border-right: 4px solid #e74c3c; text-align: left; }
+  .msg-sender { font-size: 11px; opacity: 0.8; margin-bottom: 4px; display: block; }
+  
+  .leaderboard-item { display: flex; justify-content: space-between; align-items: center; background: rgba(255,255,255,0.1); padding: 12px 15px; border-radius: 10px; margin-bottom: 10px; border-left: 5px solid #ccc; }
+  .leaderboard-item.rank-1 { border-left-color: #ffd700; background: rgba(255, 215, 0, 0.15); }
+  .leaderboard-item.rank-2 { border-left-color: #c0c0c0; background: rgba(192, 192, 192, 0.15); }
+  .leaderboard-item.rank-3 { border-left-color: #cd7f32; background: rgba(205, 127, 50, 0.15); }
+  .leaderboard-item.rank-4 { border-left-color: #555; }
+  .leaderboard-item .rank { font-size: 18px; font-weight: bold; color: #ffd700; width: 30px; text-align: center; }
+  .leaderboard-item .info { flex: 1; padding-right: 10px; }
+  .leaderboard-item .info .l-name { font-size: 16px; font-weight: bold; }
+  .leaderboard-item .info .l-stats { font-size: 11px; opacity: 0.7; margin-top: 4px; }
+  .leaderboard-item .l-score { font-size: 20px; font-weight: bold; color: #2ecc71; }
+
+  .shop-item { background: rgba(255,255,255,0.1); padding: 12px; border-radius: 10px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; border: 2px solid #f39c12; }
+  .shop-item .s-info { flex: 1; }
+  .shop-item .s-title { font-size: 16px; font-weight: bold; }
+  .shop-item .s-desc { font-size: 11px; opacity: 0.8; }
+  .shop-item button { width: auto; padding: 8px 15px; margin: 0; font-size: 14px; }
+  .shop-item .status { font-size: 13px; font-weight: bold; color: #f1c40f; }
+
+  .modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); z-index: 100; align-items: center; justify-content: center; padding: 15px; }
+  .modal.show { display: flex; }
+  .modal-content { background: #2c3e50; border-radius: 16px; padding: 20px; max-width: 400px; width: 100%; border: 2px solid #f39c12; max-height: 90vh; overflow-y: auto; }
+  .modal-content h3 { text-align: center; margin-bottom: 15px; color: #f1c40f; }
+  .modal-content button { width: 100%; padding: 12px; margin-bottom: 8px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; font-family: inherit; }
+  .modal-content select { width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 8px; border: 2px solid #f39c12; background: #2c3e50; color: #fff; font-family: inherit; font-size: 15px; font-weight: bold; }
+
+  .badge { font-size: 12px; padding: 2px 6px; border-radius: 4px; margin-right: 5px; font-weight: bold; }
+  
+  .chat-area { background: rgba(0,0,0,0.2); border-radius: 10px; padding: 10px; height: 300px; overflow-y: auto; margin-bottom: 10px; display: flex; flex-direction: column; gap: 8px; }
+  .chat-msg { background: rgba(255,255,255,0.1); padding: 8px 12px; border-radius: 10px; max-width: 85%; word-wrap: break-word; font-size: 14px; }
+  .chat-msg.mine { background: rgba(46, 204, 113, 0.3); align-self: flex-end; border-bottom-left-radius: 2px; }
+  .chat-msg.other { background: rgba(52, 152, 219, 0.3); align-self: flex-start; border-bottom-right-radius: 2px; }
+  .chat-msg.admin { background: rgba(231, 76, 60, 0.3); align-self: flex-start; border-bottom-right-radius: 2px; border-left: 3px solid #e74c3c; }
+  .chat-sender { font-size: 11px; opacity: 0.8; margin-bottom: 3px; display: block; font-weight: bold; }
+
+  .backup-table { width: 100%; border-collapse: collapse; font-size: 12px; margin-bottom: 15px; direction: ltr; text-align: left; }
+  .backup-table th { background: #34495e; color: #fff; padding: 6px; border: 1px solid #555; }
+  .backup-table td { padding: 6px; border: 1px solid #555; background: rgba(255,255,255,0.05); }
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="screen active" id="screenLogin">
+    <div class="login-box">
+      <h2>🔐 ورود به بازی</h2>
+      <div class="msg error" id="errorMsg"></div>
+      <div class="msg success" id="successMsg"></div>
+      <input type="text" id="inputUser" placeholder="نام کاربری">
+      <input type="password" id="inputPass" placeholder="رمز عبور">
+      <button class="btn-green" onclick="doLogin()">ورود به بازی</button>
+      <button class="btn-gold" onclick="showRegister()">حساب جدید بساز</button>
+      <button class="btn-purple" onclick="showLeaderboard('screenLogin')">🏆 جدول لیدربرد</button>
+      <button class="btn-blue" onclick="showPlayersList('screenLogin')">👥 لیست بازیکنان</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screenRegister">
+    <div class="login-box">
+      <h2>✨ ساخت حساب جدید</h2>
+      <div class="msg error" id="errorMsg2"></div>
+      <input type="text" id="inputUser2" placeholder="نام کاربری جدید">
+      <input type="password" id="inputPass2" placeholder="رمز عبور جدید">
+      <input type="password" id="inputPass2b" placeholder="تکرار رمز عبور">
+      <button class="btn-green" onclick="doRegister()">ثبت‌نام</button>
+      <button class="btn-gold" onclick="showLogin()">بازگشت به ورود</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screenAdminPanel">
+    <div class="login-box" style="border-color: #9b59b6;">
+      <h2 style="color: #9b59b6;">⚙️ پنل مدیریت سیستم</h2>
+      <div class="msg error" id="errorMsgAdmin"></div>
+      <div class="msg success" id="successMsgAdmin"></div>
+      <p style="text-align:center;font-size:13px;opacity:0.8;margin-bottom:15px;">ورود فقط برای مدیر</p>
+      <input type="text" id="adminUser" placeholder="نام کاربری مدیر">
+      <input type="password" id="adminPass" placeholder="رمز عبور مدیر">
+      <button class="btn-purple" onclick="doAdminLogin()">ورود به پنل</button>
+      <div id="adminTools" style="display:none; margin-top:20px; border-top:1px solid rgba(255,255,255,0.2); padding-top:15px;">
+        <h3 style="font-size:16px; margin-bottom:10px; color:#ffd700;">ابزارهای مدیریت:</h3>
+        <button class="btn-blue" onclick="showBackupPanel()">💾 مدیریت بکاپ</button>
+        <button class="btn-red" onclick="showAdminDelete()">🗑️ حذف اکانت</button>
+        <button class="btn-gold" onclick="doAdminLogout()">خروج از پنل</button>
+      </div>
+      <button class="btn-gold" style="margin-top:15px;" onclick="showLogin()">بازگشت به بازی</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screenBackup">
+    <div class="login-box">
+      <h2 style="color:#3498db;">💾 مدیریت بکاپ</h2>
+      <div class="msg error" id="backupErr"></div>
+      <div class="msg success" id="backupSuc"></div>
+      
+      <p style="font-size:13px; opacity:0.8; margin-bottom:10px;">لیست تمام اکانت‌ها و اطلاعات آن‌ها:</p>
+      <div style="max-height: 200px; overflow-y: auto; margin-bottom: 15px;">
+        <table class="backup-table" id="backupTable">
+          <thead>
+            <tr><th>User</th><th>Pass</th><th>W</th><th>L</th><th>Prem</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <button class="btn-green" onclick="downloadBackup()">📥 دانلود فایل بکاپ</button>
+      
+      <p style="font-size:13px; opacity:0.8; margin: 15px 0 10px;">بازیابی از فایل:</p>
+      <input type="file" id="backupFileInput" accept=".json" style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; color: #fff; margin-bottom: 10px; width: 100%;">
+      <button class="btn-blue" onclick="restoreBackup()">🔄 بازیابی از فایل</button>
+
+      <button class="btn-gold" style="margin-top:20px;" onclick="showScreen('screenAdminPanel')">بازگشت به پنل</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screenDelete">
+    <div class="login-box">
+      <h2>🗑️ حذف اکانت</h2>
+      <div class="msg error" id="errorMsg3"></div>
+      <div class="msg success" id="successMsg3"></div>
+      <div style="margin-bottom:15px;">
+        <input type="text" id="delUser" placeholder="نام کاربری برای حذف">
+        <input type="password" id="delPass" placeholder="رمز عبور">
+        <button class="btn-red" onclick="doDelete()">🗑️ حذف اکانت</button>
+      </div>
+      <div style="font-size:12px;opacity:0.7;margin-bottom:8px;">لیست اکانت‌ها:</div>
+      <div id="userListBox"></div>
+      <button class="btn-gold" style="margin-top:15px;" onclick="showScreen('screenAdminPanel')">بازگشت به پنل</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screenLeaderboard">
+    <div class="login-box">
+      <h2 style="color:#ffd700;">🏆 برترین فرماندهان</h2>
+      <div id="leaderboardList"></div>
+      <button class="btn-gold" style="margin-top:20px;" onclick="backFromLeaderboard()">بازگشت</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screenPlayersList">
+    <div class="login-box">
+      <h2 style="color:#3498db;">👥 لیست بازیکنان</h2>
+      <p id="adminNote" style="display:none; font-size:12px; color:#e74c3c; text-align:center; margin-bottom:10px;">(شما ادمین هستید)</p>
+      <div id="playersListBox"></div>
+      <button class="btn-gold" style="margin-top:20px;" onclick="backFromPlayersList()">بازگشت</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screenAdminPurchases">
+    <div class="login-box">
+      <h2 style="color:#e67e22;">🛒 درخواست‌های خرید</h2>
+      <div id="adminPurchasesList"></div>
+      <button class="btn-gold" style="margin-top:20px;" onclick="showScreen('screenGame')">بازگشت</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screenAdminMessages">
+    <div class="login-box">
+      <h2 style="color:#ffd700;">📩 پیام‌های بازیکنان</h2>
+      <div id="adminMessagesList"></div>
+      <button class="btn-gold" style="margin-top:20px;" onclick="showScreen('screenGame')">بازگشت</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screenSettings">
+    <div class="login-box">
+      <h2>⚙️ تنظیمات حساب</h2>
+      <div class="msg error" id="setErr"></div>
+      <div class="msg success" id="setSuc"></div>
+      <p style="font-size:13px; opacity:0.8; margin-bottom:10px;">تغییر نام کاربری:</p>
+      <input type="text" id="setNewUser" placeholder="نام کاربری جدید">
+      <p style="font-size:13px; opacity:0.8; margin-bottom:10px;">تغییر رمز عبور:</p>
+      <input type="password" id="setNewPass" placeholder="رمز عبور جدید">
+      <button class="btn-blue" onclick="doChangeProfile()">ذخیره تغییرات</button>
+      <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.2); padding-top:15px;">
+        <p style="font-size:14px; margin-bottom:10px; color:#ffd700;">🌟 ارتقا به حساب پریمیوم (کد رایگان)</p>
+        <input type="text" id="premiumCode" placeholder="کد پریمیوم را وارد کنید">
+        <button class="btn-gold" onclick="doActivatePremium()">فعال‌سازی کد</button>
+      </div>
+      <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.2); padding-top:15px;">
+        <p style="font-size:14px; margin-bottom:10px; color:#ffd700;">📞 ارتباط با ادمین</p>
+        <textarea id="msgToAdmin" placeholder="پیام خود را به صورت ناشناس بنویسید..." style="height:80px;"></textarea>
+        <button class="btn-green" onclick="sendMessageToAdmin()">ارسال پیام</button>
+        <button class="btn-gold" onclick="showMyMessages()">📩 مشاهده پاسخ‌ها</button>
+      </div>
+      <div style="margin-top:20px; border-top:1px solid rgba(255,255,255,0.2); padding-top:15px;">
+        <p style="font-size:14px; margin-bottom:10px; color:#ffd700;">🛒 فروشگاه بازی</p>
+        <div id="shopListBox"></div>
+      </div>
+      <button class="btn-gold" style="margin-top:20px;" onclick="showScreen('screenGame')">بازگشت به بازی</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screenPlayerMessages">
+    <div class="login-box">
+      <h2 style="color:#2ecc71;">📩 پیام‌های من</h2>
+      <div id="playerMessagesList"></div>
+      <button class="btn-gold" style="margin-top:20px;" onclick="showScreen('screenSettings')">بازگشت</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screenChat">
+    <div class="login-box" style="margin-top: 10px;">
+      <h2 style="color:#2ecc71;">💬 گفتگوی عمومی</h2>
+      <div class="chat-area" id="chatArea"></div>
+      <input type="text" id="chatInput" placeholder="پیام خود را بنویسید..." autocomplete="off">
+      <button class="btn-green" onclick="sendChatMessage()">ارسال پیام</button>
+      <button class="btn-gold" onclick="showScreen('screenGame')">بازگشت به بازی</button>
+    </div>
+  </div>
+
+  <div class="screen" id="screenGame">
+    <h1>⚔️ جنگ ادمکی ریاضی ⚔️</h1>
+    <div class="user-bar">
+      <div style="display:flex; gap:5px;">
+        <button class="menu-btn" onclick="showScreen('screenSettings')">☰</button>
+        <button class="menu-btn" style="background:#9b59b6;" onclick="showLeaderboard('screenGame')">🏆</button>
+        <button class="menu-btn" style="background:#3498db;" onclick="showPlayersList('screenGame')">👥</button>
+        <button class="menu-btn" style="background:#2ecc71;" onclick="showChat('screenGame')">💬</button>
+        <button class="menu-btn" id="notifBtn" style="background:#f1c40f; display:none;" onclick="showMyMessages()">🔔 <span class="notif-dot" id="notifDot"></span></button>
+        <button class="menu-btn" id="adminMsgBtn" style="background:#e74c3c; display:none;" onclick="showAdminMessages()">📩 <span class="notif-dot" id="adminNotifDot"></span></button>
+        <button class="menu-btn" id="adminShopBtn" style="background:#e67e22; display:none;" onclick="showAdminPurchases()">🛒 <span class="notif-dot" id="adminShopDot"></span></button>
+      </div>
+      <div>👤 <span class="username" id="currentUser">?</span> <span id="premiumStar" style="display:none;">⭐</span></div>
+      <button class="logout" onclick="doLogout()">خروج</button>
+    </div>
+    <div class="stats">
+      <div><span class="num" id="statTotal">0</span>بازی‌ها</div>
+      <div><span class="num" id="statWins">0</span>برد</div>
+      <div><span class="num" id="statLosses">0</span>باخت</div>
+      <div><span class="num" id="statBest">0</span>بهترین</div>
+    </div>
+    <div class="score-bar">
+      <div>امتیاز این دور: <span class="score" id="score">0</span></div>
+      <div>دور: <span class="score" id="round">1</span></div>
+    </div>
+    <div class="battlefield">
+      <div class="side you"><div class="label">شما</div><div class="emoji">🧑‍✈️</div><div class="expr" id="yourExpr">?</div></div>
+      <div class="vs">VS</div>
+      <div class="side enemy"><div class="label">دشمن</div><div class="emoji">👹</div><div class="expr" id="enemyExpr">?</div></div>
+    </div>
+    <div class="question" id="questionText">آیا می‌توانید حمله کنید؟</div>
+    <div class="buttons">
+      <button class="btn attack" id="attackBtn" onclick="choose('attack')">⚔️ بله، حمله!</button>
+      <button class="btn retreat" id="retreatBtn" onclick="choose('retreat')">🏃 خیر، فرار!</button>
+    </div>
+    <div class="message" id="message">برای شروع، تصمیم بگیر!</div>
+    <button class="restart" onclick="resetGame()">🔄 شروع مجدد دور</button>
+  </div>
+</div>
+
+<div class="modal" id="adminModal">
+  <div class="modal-content">
+    <h3 id="modalTitle">مدیریت بازیکن</h3>
+    <p style="font-size:13px; color:#ffd700; margin-bottom:5px;">تغییر مقام کاربر:</p>
+    <select id="roleSelect">
+      <option value="normal">عادی</option>
+      <option value="admin">ادمین</option>
+      <option value="helper">هلپر</option>
+      <option value="moderator">مودراتور</option>
+    </select>
+    <button class="btn-blue" onclick="changeRole()">ذخیره مقام</button>
+    <hr style="border-color:rgba(255,255,255,0.2); margin:15px 0;">
+    
+    <p style="font-size:13px; color:#ffd700; margin-bottom:5px;">مدیریت رنک‌های کاربر:</p>
+    <select id="badgeToRemoveSelect"></select>
+    <button class="btn-red" onclick="removeSpecificBadge()">❌ حذف رنک انتخاب شده</button>
+    
+    <div style="margin-top:10px;">
+      <select id="badgeToAddSelect"></select>
+      <button class="btn-green" onclick="addSpecificBadge()">✅ اضافه کردن رنک انتخاب شده</button>
+    </div>
+
+    <hr style="border-color:rgba(255,255,255,0.2); margin:15px 0;">
+    
+    <button class="btn-red" onclick="confirmDeleteAccount()">🗑️ حذف کل اکانت</button>
+    <button class="btn-gold" onclick="removePremium()">❌ حذف نشان پریمیوم</button>
+    <button class="btn-green" onclick="addPremium()">🌟 اضافه کردن نشان پریمیوم</button>
+    <button class="btn-purple" onclick="removeAllBadges()">🛡️ حذف تمام نشان‌های خرید</button>
+    <button class="btn-blue" onclick="closeModal()" style="margin-top:15px;">بستن</button>
+  </div>
+</div>
+
+<script>
+// ============================================================
+// تنظیمات و دیتابیس محلی
+// ============================================================
+const ADMIN_USER_SECRET = "Ad"; 
+const ADMIN_PASS_SECRET = "2626a";
+const ADMIN_USER_GAME = "/";
+const ADMIN_PASS_GAME = "2626a";
+const PREMIUM_CODES = ["jH8", "JDJXUDH", "Bduxbshx", "JUJUSHW", "88Q8QSHZHX", "YEUDHEHUX8", "WHHZXJ0", "EUXHXHXB6", "2UWUWJSJD", "111H", "hdhHq1", "HdJj1"];
+
+const SHOP_ITEMS = [
+  { id: "King", name: "King", color: "#ffffff", badgeText: "King" },
+  { id: "Porofosor", name: "Porofosor", color: "#ffffff", badgeText: "Porofosor" },
+  { id: "Haker", name: "Haker", color: "#ffffff", badgeText: "Haker" },
+  { id: "Playergood", name: "Playergood", color: "#ffffff", badgeText: "Playergood" },
+  { id: "Mashti", name: "Mashti", color: "#ffffff", badgeText: "Mashti" },
+  { id: "Joshkar", name: "جوشکار", color: "#e74c3c", badgeText: "جوشکار" },
+  { id: "Ahangar", name: "آهنگر", color: "#bdc3c7", badgeText: "آهنگر" },
+  { id: "Talasaz", name: "طلا ساز", color: "#f1c40f", badgeText: "طلا ساز" },
+  { id: "Pezeshk", name: "پزشک", color: "#e67e22", badgeText: "پزشک" },
+  { id: "Moallem", name: "معلم", color: "#2ecc71", badgeText: "معلم" },
+  { id: "Fesgholi", name: "فسقلی", color: "#e84393", badgeText: "فسقلی" },
+  { id: "BacheGhashang", name: "بچه قشنگ", color: "#fd79a8", badgeText: "بچه قشنگ" },
+  { id: "PesarBaba", name: "پسر بابا", color: "#0984e3", badgeText: "پسر بابا" },
+  { id: "MoallemMan", name: "معلم من", color: "#00b894", badgeText: "معلم من" },
+  { id: "BabaJoon", name: "بابا جون", color: "#fdcb6e", badgeText: "بابا جون" },
+  { id: "Pedaram", name: "پدرم", color: "#d63031", badgeText: "پدرم" },
+  { id: "Khakepakam", name: "خاک پاکم", color: "#a29bfe", badgeText: "خاک پاکم" },
+  { id: "Badbakht", name: "بدبخت", color: "#636e72", badgeText: "بدبخت" },
+  { id: "PayamBazargani", name: "پیام بازرگانی", color: "#00cec9", badgeText: "پیام بازرگانی" },
+  { id: "ShabakePooya", name: "شبکه پویا", color: "#6c5ce7", badgeText: "شبکه پویا" },
+  { id: "PeykanVant", name: "پیکان وانت", color: "#fab1a0", badgeText: "پیکان وانت" },
+  { id: "SamandSoren", name: "سمند سورن", color: "#dfe6e9", badgeText: "سمند سورن" },
+  { id: "PejooMeshki", name: "پژو مشکی", color: "#2d3436", badgeText: "پژو مشکی" },
+  { id: "Pars", name: "پارس", color: "#ffeaa7", badgeText: "پارس" },
+  { id: "Pride", name: "پراید", color: "#b2bec3", badgeText: "پراید" },
+  { id: "Tiba", name: "تیبا", color: "#74b9ff", badgeText: "تیبا" },
+  { id: "Saina", name: "ساینا", color: "#81ecec", badgeText: "ساینا" },
+  { id: "Quick", name: "کوییک", color: "#ff7675", badgeText: "کوییک" },
+  { id: "Shahin", name: "شاهین", color: "#55efc4", badgeText: "شاهین" },
+  { id: "Tara", name: "تارا", color: "#ffeaa7", badgeText: "تارا" },
+  { id: "Dena", name: "دنا", color: "#fd79a8", badgeText: "دنا" },
+  { id: "Runna", name: "رانا", color: "#fab1a0", badgeText: "رانا" },
+  { id: "Arash", name: "آریسان", color: "#a29bfe", badgeText: "آریسان" },
+  { id: "Haima", name: "هایما", color: "#b2bec3", badgeText: "هایما" },
+  { id: "Fidelity", name: "فیدلیتی", color: "#00b894", badgeText: "فیدلیتی" },
+  { id: "NissanZamyad", name: "زامیاد", color: "#e17055", badgeText: "زامیاد" },
+  { id: "Khavar", name: "خاور", color: "#d63031", badgeText: "خاور" },
+  { id: "Benz", name: "بنز", color: "#dfe6e9", badgeText: "بنز" },
+  { id: "BMW", name: "بی ام و", color: "#0984e3", badgeText: "بی ام و" }
+];
+
+let gameData = { accounts: {}, messages: [], purchases: [], chat: [] };
+
+const localData = localStorage.getItem("mathGameData");
+if (localData) {
+  gameData = JSON.parse(localData);
+} else {
+  gameData.accounts = { 
+    "admin": { password: "123456", total: 0, wins: 0, losses: 0, best: 0, premium: 1, purchases: [], role: 'normal' },
+    "/": { password: "2626a", total: 0, wins: 0, losses: 0, best: 0, premium: 1, purchases: [], role: 'admin' }
+  };
+  gameData.messages = [];
+  gameData.purchases = [];
+  gameData.chat = [];
+}
+
+let accounts = gameData.accounts;
+let messages = gameData.messages;
+let purchases = gameData.purchases;
+let chatMessages = gameData.chat;
+let currentUsername = null;
+let currentAccount = null;
+let previousScreen = 'screenLogin';
+let isAdmin = false;
+let selectedUserForModal = null;
+
+function saveData() { localStorage.setItem("mathGameData", JSON.stringify(gameData)); }
+
+// ============================================================
+// سیستم بات‌ها (۱۰۰ بات)
+// ============================================================
+const BOT_NAMES = [
+    "علی", "رضا", "سارا", "امیر", "حسین", "مریم", "نیما", "متین", "آرمان", "باران",
+    "سینا", "پویا", "کیان", "آیدا", "پرهام", "یاسین", "الهام", "نازنین", "پارسا", "رادین",
+    "سپهر", "ترمه", "آرمین", "دیبا", "هیراد", "رها", "بردیا", "غزل", "کیانوش", "آوا",
+    "شایان", "رومینا", "مانی", "آتوسا", "بردیا", "هستی", "سامان", "بهار", "کیانا", "آرش",
+    "نیلوفر", "پوریا", "مهسا", "سروش", "یلدا", "فرزاد", "سحر", "کامران", "مینا", "بهرام",
+    "شیرین", "رامین", "لیلا", "پیمان", "نرگس", "بابک", "شیوا", "آرزو", "مازیار", "فربد",
+    "ترانه", "امید", "نوید", "مهتاب", "سورنا", "تینا", "فرید", "نازنین", "آریا", "سها",
+    "کیانا", "رستم", "پریسا", "مانی", "نیما", "شقایق", "آرش", "مهیار", "رویا", "بهنام",
+    "سپیده", "کوروش", "آزاده", "سینا", "نگار", "فرزین", "مریم", "رهام", "الناز", "سام",
+    "پگاه", "رامین", "هلیا", "آرمین", "مهسا", "پارسا", "غزل", "کیان", "آیدا", "بردیا"
+];
+
+function generateRandomPassword() {
+    return Math.floor(10000000 + Math.random() * 90000000).toString();
+}
+
+function initBots() {
+    let botsCreated = false;
+    BOT_NAMES.forEach((name) => {
+        let botName = name;
+        if (!accounts[botName]) {
+            botsCreated = true;
+            let isPremium = Math.random() > 0.8 ? 1 : 0;
+            let role = 'normal'; 
+            
+            accounts[botName] = { 
+                password: generateRandomPassword(), 
+                total: Math.floor(Math.random() * 50), 
+                wins: Math.floor(Math.random() * 30), 
+                losses: Math.floor(Math.random() * 20), 
+                best: Math.floor(Math.random() * 20), 
+                premium: isPremium, 
+                purchases: [], 
+                role: role,
+                isBot: true 
+            };
+        }
+    });
+
+    if (botsCreated) {
+        saveData();
+    }
+}
+
+// فعالیت بات‌ها (بازی و خرید هر ۵ دقیقه با ۵ نفر)
+function simulateBotActivity() {
+    const now = Date.now();
+    const lastVisit = localStorage.getItem("lastBotActivityTime") || now;
+    const timeDiff = now - lastVisit;
+    
+    // هر ۵ دقیقه یک دوره فعالیت
+    const periods = Math.floor(timeDiff / (5 * 60 * 1000)); 
+    
+    if (periods > 0) {
+        // ۱. همه بات‌ها بازی می‌کنن (۲۰ بازی شانسی در هر دوره)
+        BOT_NAMES.forEach(botName => {
+            if (accounts[botName]) {
+                for (let i = 0; i < periods; i++) {
+                    let games = 20; 
+                    for(let g=0; g<games; g++) {
+                        let isWin = Math.random() > 0.5; 
+                        accounts[botName].total += 1;
+                        if (isWin) accounts[botName].wins += 1;
+                        else accounts[botName].losses += 1;
+                    }
+                }
+            }
+        });
+
+        // ۲. خرید کردن (دقیقاً ۵ نفر شانسی در هر ۵ دقیقه)
+        for (let i = 0; i < periods; i++) {
+            let shuffled = BOT_NAMES.sort(() => 0.5 - Math.random());
+            let buyers = shuffled.slice(0, 5); // فقط ۵ نفر
+            
+            buyers.forEach(botName => {
+                if (accounts[botName]) {
+                    let randomItem = SHOP_ITEMS[Math.floor(Math.random() * SHOP_ITEMS.length)];
+                    let alreadyHasIt = accounts[botName].purchases.includes(randomItem.id);
+                    let alreadyPending = purchases.some(p => p.user === botName && p.item === randomItem.id && p.status === 'pending');
+                    
+                    if (!alreadyHasIt && !alreadyPending) {
+                        purchases.push({ id: Date.now() + Math.floor(Math.random() * 1000), user: botName, item: randomItem.id, status: 'pending' });
+                    }
+                }
+            });
+        }
+        
+        saveData();
+    }
+    localStorage.setItem("lastBotActivityTime", now);
+}
+
+// مولد جمله‌های چت
+const CHAT_STARTERS = ["سلام", "خوبی", "چه خبر", "بچه‌ها", "بچه‌ها یه سوال", "بچه‌ها کمک", "وای", "عجب", "دقت کردی", "راستی"];
+const CHAT_ACTIONS = ["امروز", "الان", "دیروز", "فردا", "تو بازی", "توی لیدربرد", "توی چت", "توی ریاضی", "با بات‌ها"];
+const CHAT_VERBS = ["چند تا بازی بردم", "باختم", "برنده شدم", "مسابقه دادم", "امتیاز گرفتم", "پریمیوم شدم", "رنک خریدم", "ادمین شدم", "هلپر شدم", "بیدارم", "خوابم میاد", "حوصلم سر رفته", "دنبال حریفم", "قوی شدم", "ضعیف شدم"];
+const CHAT_ENDINGS = ["!", "؟", " 😂", " 🎮", " 🤔", " 😎", " 👍", " 🏆", " 🤷‍♂️", ""];
+
+function generateRandomChat() {
+    let starter = CHAT_STARTERS[Math.floor(Math.random() * CHAT_STARTERS.length)];
+    let action = CHAT_ACTIONS[Math.floor(Math.random() * CHAT_ACTIONS.length)];
+    let verb = CHAT_VERBS[Math.floor(Math.random() * CHAT_VERBS.length)];
+    let ending = CHAT_ENDINGS[Math.floor(Math.random() * CHAT_ENDINGS.length)];
+    let type = Math.floor(Math.random() * 3);
+    if (type === 0) return starter + "، " + action + " " + verb + ending;
+    else if (type === 1) return action + " " + starter + " " + verb + ending;
+    else return starter + " " + verb + " " + action + ending;
+}
+
+// مولد پیام بات‌ها به ادمین
+const ADMIN_MSG_STARTERS = ["سلام ادمین", "ادمین محترم", "آقای ادمین", "ادمین عزیز", "سلام مدیر", "مدیر"];
+const ADMIN_MSG_ACTIONS = ["من امروز", "من توی بازی", "من توی لیدربرد", "من توی چت", "من توی خرید", "من توی مسابقات"];
+const ADMIN_MSG_REQUESTS = ["کمک می‌خوام", "یه سوال دارم", "چرا پریمیوم شدم", "چرا رنکم حذف شد", "چطور می‌تونم بهتر بشم", "یه باگ پیدا کردم", "می‌خوام خرید کنم", "چرا نمی‌تونم وارد بشم", "می‌خوام مقام بگیرم", "کسی جوابم رو نمیده"];
+
+function generateRandomAdminMessage() {
+    let starter = ADMIN_MSG_STARTERS[Math.floor(Math.random() * ADMIN_MSG_STARTERS.length)];
+    let action = ADMIN_MSG_ACTIONS[Math.floor(Math.random() * ADMIN_MSG_ACTIONS.length)];
+    let request = ADMIN_MSG_REQUESTS[Math.floor(Math.random() * ADMIN_MSG_REQUESTS.length)];
+    return starter + "، " + action + " " + request + "!";
+}
+
+function startBotChatSimulation() {
+    setInterval(() => {
+        if (currentUsername) { 
+            let numMessages = Math.floor(Math.random() * 3) + 1; 
+            for (let i = 0; i < numMessages; i++) {
+                setTimeout(() => { 
+                    let botName = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
+                    let phrase = generateRandomChat();
+                    chatMessages.push({ from: botName, text: phrase, date: Date.now() });
+                    saveData();
+                    if (document.getElementById('screenChat').classList.contains('active')) renderChat();
+                }, i * 1000);
+            }
+
+            if (Math.random() > 0.7) { 
+                let botName = BOT_NAMES[Math.floor(Math.random() * BOT_NAMES.length)];
+                let adminMsgPhrase = generateRandomAdminMessage();
+                messages.push({ id: Date.now(), from: botName, text: adminMsgPhrase, reply: null, date: new Date().toLocaleDateString('fa-IR') });
+                saveData();
+            }
+        }
+    }, 3000);
+}
+
+// ============================================================
+// اجرای اولیه
+// ============================================================
+Object.keys(accounts).forEach(k => {
+  if (!accounts[k].purchases) accounts[k].purchases = [];
+  if (!accounts[k].role) accounts[k].role = 'normal';
+});
+
+initBots();
+simulateBotActivity();
+startBotChatSimulation();
+
+function showScreen(id) {
+  var screens = document.querySelectorAll('.screen');
+  for (var i = 0; i < screens.length; i++) screens[i].classList.remove('active');
+  document.getElementById(id).classList.add('active');
+}
+
+// ============================================================
+// سیستم بکاپ
+// ============================================================
+function showBackupPanel() {
+  showScreen('screenBackup');
+  var tbody = document.querySelector('#backupTable tbody');
+  tbody.innerHTML = '';
+  
+  Object.keys(accounts).forEach(user => {
+    var acc = accounts[user];
+    var tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${user}</td>
+      <td>${acc.password}</td>
+      <td>${acc.wins}</td>
+      <td>${acc.losses}</td>
+      <td>${acc.premium ? 'YES' : 'NO'}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function downloadBackup() {
+  var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(gameData, null, 2));
+  var downloadAnchorNode = document.createElement('a');
+  downloadAnchorNode.setAttribute("href", dataStr);
+  downloadAnchorNode.setAttribute("download", "mathwar_backup_" + Date.now() + ".json");
+  document.body.appendChild(downloadAnchorNode);
+  downloadAnchorNode.click();
+  downloadAnchorNode.remove();
+  showMsg('backupSuc', '✅ فایل بکاپ دانلود شد.', 'success');
+}
+
+function restoreBackup() {
+  var fileInput = document.getElementById('backupFileInput');
+  var file = fileInput.files[0];
+  if (!file) {
+    showMsg('backupErr', 'لطفاً ابتدا یک فایل انتخاب کنید.', 'error');
+    return;
+  }
+
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var importedData = JSON.parse(e.target.result);
+      if (importedData.accounts) {
+        gameData = importedData;
+        accounts = gameData.accounts;
+        messages = gameData.messages || [];
+        purchases = gameData.purchases || [];
+        chatMessages = gameData.chat || [];
+        
+        saveData();
+        showMsg('backupSuc', '✅ بکاپ با موفقیت بازیابی شد!', 'success');
+        setTimeout(() => { showScreen('screenAdminPanel'); }, 1500);
+      } else {
+        showMsg('backupErr', 'فایل معتبر نیست.', 'error');
+      }
+    } catch (err) {
+      showMsg('backupErr', 'خطا در خواندن فایل.', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function showChat(fromScreen) {
+  previousScreen = fromScreen;
+  showScreen('screenChat');
+  renderChat();
+}
+
+function renderChat() {
+  var area = document.getElementById('chatArea');
+  area.innerHTML = '';
+  var msgsToShow = chatMessages.slice(-50); 
+  msgsToShow.forEach(m => {
+    var div = document.createElement('div');
+    var isMine = m.from === currentUsername;
+    var isAdm = (m.from === 'admin' || m.from === ADMIN_USER_GAME);
+    
+    if (isMine) div.className = 'chat-msg mine';
+    else if (isAdm) div.className = 'chat-msg admin';
+    else div.className = 'chat-msg other';
+    
+    var nameColor = isAdm ? '#e74c3c' : '#3498db';
+    div.innerHTML = '<span class="chat-sender" style="color:' + nameColor + ';">' + m.from + ':</span>' + m.text;
+    area.appendChild(div);
+  });
+  area.scrollTop = area.scrollHeight;
+}
+
+function sendChatMessage() {
+  var input = document.getElementById('chatInput');
+  var text = input.value.trim();
+  if (!text) return;
+  
+  chatMessages.push({ from: currentUsername, text: text, date: Date.now() });
+  saveData();
+  input.value = '';
+  renderChat();
+}
+
+function getBadgesHTML(user) {
+  var html = '';
+  if (user.role === 'admin') html += ' <span class="badge" style="background:#e74c3c; color:#fff;">ادمین</span>';
+  else if (user.role === 'helper') html += ' <span class="badge" style="background:#00b894; color:#fff;">هلپر</span>';
+  else if (user.role === 'moderator') html += ' <span class="badge" style="background:#3498db; color:#fff;">مودراتور</span>';
+  if (user.premium) html += ' ⭐';
+  if (user.purchases) {
+    user.purchases.forEach(itemId => {
+      var item = SHOP_ITEMS.find(i => i.id === itemId);
+      if (item) {
+        if (item.badgeText) {
+          var textColor = '#000';
+          if (item.id === 'PejooMeshki' || item.id === 'ShabakePooya') textColor = '#fff';
+          html += ' <span class="badge" style="background:' + item.color + '; color:' + textColor + ';">' + item.badgeText + '</span>';
+        }
+      }
+    });
+  }
+  return html;
+}
+
+function openAdminModal(username) {
+  selectedUserForModal = username;
+  document.getElementById('modalTitle').textContent = 'مدیریت بازیکن: ' + username;
+  
+  var currentRole = accounts[username].role || 'normal';
+  document.getElementById('roleSelect').value = currentRole;
+
+  // پر کردن منوی حذف رنک
+  var badgeSelect = document.getElementById('badgeToRemoveSelect');
+  badgeSelect.innerHTML = '';
+  if (accounts[username].purchases.length === 0) {
+    badgeSelect.innerHTML = '<option value="">هیچ رنکی ندارد</option>';
+  } else {
+    accounts[username].purchases.forEach(pId => {
+      var item = SHOP_ITEMS.find(i => i.id === pId);
+      if (item) {
+        var opt = document.createElement('option');
+        opt.value = pId;
+        opt.textContent = item.name;
+        badgeSelect.appendChild(opt);
+      }
+    });
+  }
+
+  // پر کردن منوی اضافه کردن رنک (همه رنک‌هایی که کاربر ندارد)
+  var badgeAddSelect = document.getElementById('badgeToAddSelect');
+  badgeAddSelect.innerHTML = '';
+  SHOP_ITEMS.forEach(item => {
+    if (!accounts[username].purchases.includes(item.id)) {
+      var opt = document.createElement('option');
+      opt.value = item.id;
+      opt.textContent = item.name;
+      badgeAddSelect.appendChild(opt);
+    }
+  });
+  
+  document.getElementById('adminModal').classList.add('show');
+}
+
+function closeModal() {
+  document.getElementById('adminModal').classList.remove('show');
+  selectedUserForModal = null;
+  showPlayersList('screenPlayersList');
+}
+
+function changeRole() {
+  var newRole = document.getElementById('roleSelect').value;
+  accounts[selectedUserForModal].role = newRole;
+  saveData();
+  closeModal();
+}
+
+function removeSpecificBadge() {
+  var badgeToRemove = document.getElementById('badgeToRemoveSelect').value;
+  if (!badgeToRemove) return;
+  var idx = accounts[selectedUserForModal].purchases.indexOf(badgeToRemove);
+  if (idx > -1) {
+    accounts[selectedUserForModal].purchases.splice(idx, 1);
+    saveData();
+    openAdminModal(selectedUserForModal);
+  }
+}
+
+function addSpecificBadge() {
+  var badgeToAdd = document.getElementById('badgeToAddSelect').value;
+  if (!badgeToAdd) return;
+  if (!accounts[selectedUserForModal].purchases.includes(badgeToAdd)) {
+    accounts[selectedUserForModal].purchases.push(badgeToAdd);
+    saveData();
+    openAdminModal(selectedUserForModal);
+  }
+}
+
+function confirmDeleteAccount() {
+  if (selectedUserForModal === 'admin' || selectedUserForModal === ADMIN_USER_GAME) {
+    alert('اکانت اصلی قابل حذف نیست!');
+    return;
+  }
+  if (confirm('آیا مطمئنی می‌خواهی کل اکانت "' + selectedUserForModal + '" را حذف کنی؟')) {
+    delete accounts[selectedUserForModal];
+    saveData();
+    closeModal();
+  }
+}
+
+function removePremium() {
+  accounts[selectedUserForModal].premium = 0;
+  saveData();
+  openAdminModal(selectedUserForModal);
+}
+
+function addPremium() {
+  accounts[selectedUserForModal].premium = 1;
+  saveData();
+  openAdminModal(selectedUserForModal);
+}
+
+function removeAllBadges() {
+  accounts[selectedUserForModal].purchases = [];
+  saveData();
+  openAdminModal(selectedUserForModal);
+}
+
+function renderShop() {
+  var box = document.getElementById('shopListBox');
+  box.innerHTML = '';
+  SHOP_ITEMS.forEach(item => {
+    var owned = currentAccount.purchases.includes(item.id);
+    var pending = purchases.find(p => p.user === currentUsername && p.item === item.id && p.status === 'pending');
+    var div = document.createElement('div');
+    div.className = 'shop-item';
+    var actionHtml = '';
+    if (owned) actionHtml = '<span class="status" style="color:#2ecc71;">✅ خریداری شده</span>';
+    else if (pending) actionHtml = '<span class="status">⏳ در انتظار تایید</span>';
+    else actionHtml = '<button class="btn-green" onclick="requestPurchase(\'' + item.id + '\')">خرید</button>';
+    div.innerHTML = '<div class="s-info"><div class="s-title" style="color:' + item.color + ';">' + item.name + '</div><div class="s-desc">ویژه و محدود</div></div>' + actionHtml;
+    box.appendChild(div);
+  });
+}
+
+function requestPurchase(itemId) {
+  purchases.push({ id: Date.now(), user: currentUsername, item: itemId, status: 'pending' });
+  saveData();
+  renderShop();
+  showMsg('setSuc', '✅ درخواست خرید ارسال شد.', 'success');
+}
+
+function showAdminPurchases() {
+  showScreen('screenAdminPurchases');
+  var list = document.getElementById('adminPurchasesList');
+  list.innerHTML = '';
+  var pendingList = purchases.filter(p => p.status === 'pending');
+  if (pendingList.length === 0) { list.innerHTML = '<p style="text-align:center; opacity:0.7;">هیچ درخواستی نیست.</p>'; return; }
+  pendingList.forEach(p => {
+    var itemData = SHOP_ITEMS.find(i => i.id === p.item);
+    var div = document.createElement('div');
+    div.className = 'user-list-item';
+    div.innerHTML = '<div class="header"><span>👤 ' + p.user + '</span></div>' +
+                    '<div style="font-size:15px;">درخواست: <b style="color:' + (itemData ? itemData.color : '#fff') + ';">' + (itemData ? itemData.name : p.item) + '</b></div>' +
+                    '<div class="actions" style="margin-top:10px;">' +
+                    '<button class="btn-green" onclick="approvePurchase(' + p.id + ')">✅ تایید</button>' +
+                    '<button class="btn-red" onclick="rejectPurchase(' + p.id + ')">❌ رد</button>' +
+                    '</div>';
+    list.appendChild(div);
+  });
+  document.getElementById('adminShopDot').style.display = 'none';
+}
+
+function approvePurchase(id) {
+  var p = purchases.find(x => x.id === id);
+  if (p) {
+    p.status = 'approved';
+    if (!accounts[p.user].purchases.includes(p.item)) accounts[p.user].purchases.push(p.item);
+    saveData();
+    showAdminPurchases();
+  }
+}
+
+function rejectPurchase(id) {
+  var p = purchases.find(x => x.id === id);
+  if (p) { p.status = 'rejected'; saveData(); showAdminPurchases(); }
+}
+
+function showPlayersList(fromScreen) {
+  previousScreen = fromScreen;
+  showScreen('screenPlayersList');
+  document.getElementById('adminNote').style.display = isAdmin ? 'block' : 'none';
+  var listBox = document.getElementById('playersListBox');
+  listBox.innerHTML = '';
+  
+  var usersArray = Object.keys(accounts).map(name => ({ name: name, data: accounts[name] }));
+  usersArray.sort((a, b) => b.data.wins - a.data.wins);
+  
+  usersArray.forEach(userObj => {
+    var n = userObj.name;
+    var user = userObj.data;
+    var badge = getBadgesHTML(user);
+    var actions = '';
+    
+    if (isAdmin && n !== ADMIN_USER_GAME && n !== 'admin') {
+      actions = '<button class="manage-btn" onclick="openAdminModal(\'' + n + '\')">⚙️ مدیریت</button>';
+    }
+    
+    var div = document.createElement('div');
+    div.className = 'user-list-item';
+    div.innerHTML = '<div class="header"><span class="name">👤 ' + n + badge + '</span><div class="actions">' + actions + '</div></div>';
+    listBox.appendChild(div);
+  });
+}
+function backFromPlayersList() { showScreen(previousScreen); }
+
+function sendMessageToAdmin() {
+  var text = document.getElementById('msgToAdmin').value.trim();
+  if (!text) { showMsg('setErr', 'متن پیام خالی است.', 'error'); return; }
+  messages.push({ id: Date.now(), from: currentUsername, text: text, reply: null, date: new Date().toLocaleDateString('fa-IR') });
+  saveData();
+  document.getElementById('msgToAdmin').value = '';
+  showMsg('setSuc', '✅ پیام ارسال شد.', 'success');
+}
+
+function showMyMessages() {
+  showScreen('screenPlayerMessages');
+  var list = document.getElementById('playerMessagesList');
+  list.innerHTML = '';
+  var myMsgs = messages.filter(m => m.from === currentUsername);
+  if (myMsgs.length === 0) { list.innerHTML = '<p style="text-align:center; opacity:0.7;">پیامی ندارید.</p>'; return; }
+  myMsgs.slice().reverse().forEach(m => {
+    var div = document.createElement('div');
+    div.className = 'user-list-item';
+    var html = '<div class="msg-bubble msg-user"><span class="msg-sender">👤 شما</span>' + m.text + '</div>';
+    if (m.reply) html += '<div class="msg-bubble msg-admin"><span class="msg-sender">🛡️ مدیریت (ناشناس)</span>' + m.reply + '</div>';
+    else html += '<div style="font-size:12px; opacity:0.5; text-align:center;">در انتظار پاسخ...</div>';
+    div.innerHTML = html;
+    list.appendChild(div);
+  });
+  document.getElementById('notifDot').style.display = 'none';
+}
+
+function showAdminMessages() {
+  showScreen('screenAdminMessages');
+  var list = document.getElementById('adminMessagesList');
+  list.innerHTML = '';
+  if (messages.length === 0) { list.innerHTML = '<p style="text-align:center; opacity:0.7;">پیامی نیست.</p>'; return; }
+  messages.slice().reverse().forEach(m => {
+    var div = document.createElement('div');
+    div.className = 'user-list-item';
+    var html = '<div class="header"><span>👤 ' + m.from + '</span></div><div class="msg-bubble msg-user">' + m.text + '</div>';
+    if (m.reply) html += '<div class="msg-bubble msg-admin"><span class="msg-sender">پاسخ شما:</span>' + m.reply + '</div>';
+    else html += '<div style="margin-top:5px;"><input type="text" id="reply_' + m.id + '" placeholder="پاسخ..." style="margin-bottom:5px;"><button class="btn-green" onclick="replyToMsg(' + m.id + ')">ارسال</button></div>';
+    div.innerHTML = html;
+    list.appendChild(div);
+  });
+  document.getElementById('adminNotifDot').style.display = 'none';
+}
+
+function replyToMsg(id) {
+  var text = document.getElementById('reply_' + id).value.trim();
+  if (!text) return;
+  var msg = messages.find(m => m.id === id);
+  if (msg) { msg.reply = text; saveData(); showAdminMessages(); }
+}
+
+function showLeaderboard(fromScreen) {
+  previousScreen = fromScreen;
+  showScreen('screenLeaderboard');
+  var listDiv = document.getElementById('leaderboardList');
+  listDiv.innerHTML = '';
+  
+  var usersArray = Object.keys(accounts).map(name => ({ name: name, data: accounts[name] }));
+  usersArray.sort((a, b) => b.data.wins - a.data.wins); 
+  
+  var top4 = usersArray.slice(0, 4);
+  if (top4.length === 0) { listDiv.innerHTML = '<p style="text-align:center;">هیچ بازیکنی نیست.</p>'; return; }
+  var rankNames = ['🥇 اول', '🥈 دوم', '🥉 سوم', 'چهارم'];
+  top4.forEach((user, index) => {
+    var badge = getBadgesHTML(user.data);
+    var div = document.createElement('div');
+    div.className = 'leaderboard-item rank-' + (index + 1);
+    div.innerHTML = '<div class="rank">' + rankNames[index] + '</div><div class="info"><div class="l-name">' + user.name + badge + '</div><div class="l-stats">' + user.data.wins + ' برد | ' + user.data.losses + ' باخت</div></div><div class="l-score">' + user.data.wins + '</div>';
+    listDiv.appendChild(div);
+  });
+}
+function backFromLeaderboard() { showScreen(previousScreen); }
+
+function doLogin() {
+  var u = document.getElementById('inputUser').value.trim();
+  var p = document.getElementById('inputPass').value;
+  if (u === ADMIN_USER_SECRET && p === ADMIN_PASS_SECRET) {
+    showScreen('screenAdminPanel');
+    document.getElementById('adminTools').style.display = 'none';
+    document.getElementById('adminUser').value = '';
+    document.getElementById('adminPass').value = '';
+    document.getElementById('inputUser').value = '';
+    document.getElementById('inputPass').value = '';
+    return;
+  }
+  if (!accounts[u]) { showMsg('errorMsg', 'نام کاربری وجود ندارد', 'error'); return; }
+  if (accounts[u].password !== p) { showMsg('errorMsg', 'رمز اشتباه است', 'error'); return; }
+  isAdmin = (u === ADMIN_USER_GAME || u === 'admin');
+  startGame(u, accounts[u]);
+}
+
+function doAdminLogin() {
+  var user = document.getElementById('adminUser').value.trim();
+  var pass = document.getElementById('adminPass').value;
+  if (user === ADMIN_USER_SECRET && pass === ADMIN_PASS_SECRET) {
+    document.getElementById('adminTools').style.display = 'block';
+    document.getElementById('adminUser').value = '';
+    document.getElementById('adminPass').value = '';
+    document.getElementById('errorMsgAdmin').classList.remove('show');
+  } else { showMsg('errorMsgAdmin', 'دسترسی غیرمجاز!', 'error'); }
+}
+
+function doAdminLogout() { document.getElementById('adminTools').style.display = 'none'; showLogin(); }
+
+function showAdminDelete() {
+  showScreen('screenDelete');
+  document.getElementById('errorMsg3').classList.remove('show');
+  document.getElementById('successMsg3').classList.remove('show');
+  document.getElementById('delUser').value = '';
+  document.getElementById('delPass').value = '';
+  refreshDeleteList();
+}
+
+function doDelete() {
+  var username = document.getElementById('delUser').value.trim();
+  var password = document.getElementById('delPass').value;
+  if (!username || !password) { showMsg('errorMsg3', 'نام و رمز را وارد کن', 'error'); return; }
+  if (!accounts[username]) { showMsg('errorMsg3', 'نام کاربری نیست', 'error'); return; }
+  if (accounts[username].password !== password) { showMsg('errorMsg3', 'رمز اشتباه است', 'error'); return; }
+  if (username === 'admin' || username === ADMIN_USER_GAME) { showMsg('errorMsg3', 'اکانت اصلی حذف نمی‌شود', 'error'); return; }
+  if (confirm('آیا مطمئنی می‌خواهی اکانت "' + username + '" را حذف کنی؟')) {
+    delete accounts[username];
+    saveData();
+    document.getElementById('delUser').value = '';
+    document.getElementById('delPass').value = '';
+    refreshDeleteList();
+    showMsg('successMsg3', '✅ حذف شد', 'success');
+  }
+}
+
+function refreshDeleteList() {
+  var box = document.getElementById('userListBox');
+  var names = Object.keys(accounts);
+  if (names.length === 0) { box.innerHTML = '<div style="text-align:center;">هیچ اکانتی نیست</div>'; return; }
+  box.innerHTML = names.map(function(n) {
+    var badge = getBadgesHTML(accounts[n]);
+    return '<div class="user-list-item">' +
+      '<span class="name">👤 ' + n + badge + '</span>' +
+      '<div class="actions">' +
+        '<button class="manage-btn" onclick="document.getElementById(\'delUser\').value=\'' + n + '\'">انتخاب</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function showLogin() { showScreen('screenLogin'); document.getElementById('errorMsg').classList.remove('show'); document.getElementById('successMsg').classList.remove('show'); }
+function showRegister() { showScreen('screenRegister'); document.getElementById('errorMsg2').classList.remove('show'); }
+function showMsg(id, text, type) { var el = document.getElementById(id); el.textContent = text; el.className = 'msg ' + type + ' show'; }
+
+function doRegister() {
+  var u = document.getElementById('inputUser2').value.trim();
+  var p = document.getElementById('inputPass2').value;
+  var p2 = document.getElementById('inputPass2b').value;
+  if (!u || !p || p !== p2) { showMsg('errorMsg2', 'اطلاعات نامعتبر است', 'error'); return; }
+  if (accounts[u]) { showMsg('errorMsg2', 'نام کاربری تکراری است', 'error'); return; }
+  if (u === ADMIN_USER_SECRET || u === ADMIN_USER_GAME) { showMsg('errorMsg2', 'نام کاربری رزرو شده', 'error'); return; }
+  
+  accounts[u] = { password: p, total: 0, wins: 0, losses: 0, best: 0, premium: 0, purchases: [], role: 'normal' };
+  saveData();
+  isAdmin = false;
+  startGame(u, accounts[u]);
+}
+
+function startGame(username, user) {
+  currentUsername = username;
+  currentAccount = user;
+  document.getElementById('currentUser').textContent = username;
+  document.getElementById('premiumStar').style.display = user.premium ? 'inline' : 'none';
+  
+  if (isAdmin) {
+    document.getElementById('adminMsgBtn').style.display = 'block';
+    document.getElementById('adminShopBtn').style.display = 'block';
+    document.getElementById('notifBtn').style.display = 'none';
+    document.getElementById('adminNotifDot').style.display = messages.some(m => m.reply === null) ? 'block' : 'none';
+    document.getElementById('adminShopDot').style.display = purchases.some(p => p.status === 'pending') ? 'block' : 'none';
+  } else {
+    document.getElementById('adminMsgBtn').style.display = 'none';
+    document.getElementById('adminShopBtn').style.display = 'none';
+    document.getElementById('notifBtn').style.display = 'block';
+    document.getElementById('notifDot').style.display = messages.some(m => m.from === username && m.reply !== null) ? 'block' : 'none';
+  }
+
+  updateStatsUI();
+  renderShop();
+  resetGame();
+  showScreen('screenGame');
+}
+
+function updateStatsUI() {
+  if (!currentAccount) return;
+  document.getElementById('statTotal').textContent = currentAccount.total;
+  document.getElementById('statWins').textContent = currentAccount.wins;
+  document.getElementById('statLosses').textContent = currentAccount.losses;
+  document.getElementById('statBest').textContent = currentAccount.best;
+}
+
+function doLogout() { currentUsername = null; currentAccount = null; isAdmin = false; showLogin(); }
+
+function doChangeProfile() {
+  var u = document.getElementById('setNewUser').value.trim();
+  var p = document.getElementById('setNewPass').value;
+  if (!u && !p) { showMsg('setErr', 'تغییری نکردی', 'error'); return; }
+  var old = currentUsername;
+  if (u && u !== old) {
+    if (accounts[u]) { showMsg('setErr', 'نام کاربری تکراری', 'error'); return; }
+    accounts[u] = accounts[old]; delete accounts[old];
+    currentUsername = u; currentAccount = accounts[u];
+    document.getElementById('currentUser').textContent = u;
+    saveData();
+  }
+  if (p) {
+    if (p.length < 4) { showMsg('setErr', 'رمز کوتاه است', 'error'); return; }
+    currentAccount.password = p; saveData();
+  }
+  document.getElementById('setNewUser').value = ''; document.getElementById('setNewPass').value = '';
+  showMsg('setSuc', '✅ تغییرات ذخیره شد', 'success');
+}
+
+function doActivatePremium() {
+  var code = document.getElementById('premiumCode').value.trim();
+  if (PREMIUM_CODES.map(c => c.toUpperCase()).includes(code.toUpperCase())) {
+    currentAccount.premium = 1; saveData();
+    document.getElementById('premiumStar').style.display = 'inline';
+    document.getElementById('premiumCode').value = '';
+    showMsg('setSuc', '🌟 پریمیوم فعال شد!', 'success');
+  } else { showMsg('setErr', 'کد نامعتبر', 'error'); }
+}
+
+function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function randChoice(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function makeExpression() {
+  var type = randChoice(['paren_add', 'paren_sub', 'paren_mul', 'mul_add', 'mul_sub', 'paren_mul2']);
+  var a = randInt(2, 9), b = randInt(2, 9), c = randInt(1, 10), d = randInt(1, 5);
+  if (type === 'paren_add') return { expr: a + ' × (' + b + ' + ' + c + ')', value: a * (b + c) };
+  if (type === 'paren_sub') { if (b <= c) return makeExpression(); return { expr: a + ' × (' + b + ' - ' + c + ')', value: a * (b - c) }; }
+  if (type === 'paren_mul') return { expr: '(' + a + ' + ' + b + ') × ' + c, value: (a + b) * c };
+  if (type === 'mul_add') return { expr: a + ' × ' + b + ' + ' + c, value: a * b + c };
+  if (type === 'mul_sub') { if (a * b <= c) return makeExpression(); return { expr: a + ' × ' + b + ' - ' + c, value: a * b - c }; }
+  var newA = a * d;
+  return { expr: '(' + newA + ' × ' + b + ') ÷ ' + d, value: (newA * b) / d };
+}
+function makeQuestion() { var you = makeExpression(); var enemy = makeExpression(); return { yourExpr: you.expr, yourValue: you.value, enemyExpr: enemy.expr, enemyValue: enemy.value }; }
+
+var score = 0, round = 1, currentQ = null, answered = false;
+var MAX_ROUNDS = 20;
+
+function resetGame() {
+  score = 0; round = 1; answered = false;
+  document.getElementById('score').textContent = '0'; document.getElementById('round').textContent = '1';
+  document.getElementById('message').textContent = 'برای شروع، تصمیم بگیر!'; document.getElementById('message').className = 'message';
+  newRound();
+}
+
+function newRound() {
+  if (round > MAX_ROUNDS) { showFinal(); return; }
+  answered = false;
+  currentQ = makeQuestion();
+  document.getElementById('yourExpr').textContent = currentQ.yourExpr;
+  document.getElementById('enemyExpr').textContent = currentQ.enemyExpr;
+  document.getElementById('questionText').textContent = 'آیا می‌توانید حمله کنید؟';
+  document.getElementById('attackBtn').disabled = false; document.getElementById('retreatBtn').disabled = false;
+  document.getElementById('message').textContent = 'تصمیم بگیر: حمله یا فرار؟'; document.getElementById('message').className = 'message';
+}
+
+function choose(action) {
+  if (answered || !currentQ) return; answered = true;
+  document.getElementById('attackBtn').disabled = true; document.getElementById('retreatBtn').disabled = true;
+  var you = currentQ.yourValue, enemy = currentQ.enemyValue;
+  var msg = '', msgClass = '', delta = 0;
+  if (you > enemy) { if (action === 'attack') { delta = 1; msg = '✅ بردی! → +۱'; msgClass = 'win'; } else { delta = -1; msg = '❌ فرار کردی! → -۱'; msgClass = 'lose'; } }
+  else if (enemy > you) { if (action === 'retreat') { delta = 1; msg = '✅ عاقلانه فرار! → +۱'; msgClass = 'win'; } else { delta = -1; msg = '❌ شکست خوردی! → -۱'; msgClass = 'lose'; } }
+  else { delta = 0; msg = '⚖️ مساوی! → ۰'; msgClass = 'draw'; }
+  currentAccount.total += 1; if (delta > 0) currentAccount.wins += 1; else if (delta < 0) currentAccount.losses += 1;
+  if (score > currentAccount.best) currentAccount.best = score;
+  saveData(); updateStatsUI();
+  score += delta; document.getElementById('score').textContent = score;
+  document.getElementById('message').textContent = msg; document.getElementById('message').className = 'message ' + msgClass;
+  round++; document.getElementById('round').textContent = Math.min(round, MAX_ROUNDS);
+  setTimeout(() => { if (round > MAX_ROUNDS) showFinal(); else newRound(); }, 2800);
+}
+
+function showFinal() {
+  var finalMsg = (score >= 15) ? '🏆 عالی! امتیاز: ' + score : (score >= 10) ? '⭐ خوب! امتیاز: ' + score : (score >= 5) ? '👍 متوسط! امتیاز: ' + score : (score >= 0) ? '😐 ضعیف! امتیاز: ' + score : '💀 باختی! امتیاز: ' + score;
+  document.getElementById('questionText').textContent = '🏁 بازی تمام شد!';
+  document.getElementById('message').textContent = finalMsg;
+  document.getElementById('message').className = 'message ' + (score >= 10 ? 'win' : score >= 0 ? 'draw' : 'lose');
+  document.getElementById('yourExpr').textContent = '?'; document.getElementById('enemyExpr').textContent = '?';
+  document.getElementById('attackBtn').disabled = true; document.getElementById('retreatBtn').disabled = true;
+}
+</script>
+</body>
+</html>
