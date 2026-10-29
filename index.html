@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>جنگ ادمکی ریاضی (بات‌دار)</title>
+<title>جنگ ادمکی ریاضی</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: Tahoma, sans-serif; }
   body { background: linear-gradient(135deg, #8b0000, #4a0000); min-height: 100vh; padding: 10px; color: #fff; }
@@ -323,6 +323,7 @@
       <option value="admin">ادمین</option>
       <option value="helper">هلپر</option>
       <option value="moderator">مودراتور</option>
+      <option value=:"tester">تست کننده </option>
     </select>
     <button class="btn-blue" onclick="changeRole()">ذخیره مقام</button>
     <hr style="border-color:rgba(255,255,255,0.2); margin:15px 0;">
@@ -369,33 +370,12 @@ const SHOP_ITEMS = [
   { id: "Moallem", name: "معلم", color: "#2ecc71", badgeText: "معلم" },
   { id: "Fesgholi", name: "فسقلی", color: "#e84393", badgeText: "فسقلی" },
   { id: "BacheGhashang", name: "بچه قشنگ", color: "#fd79a8", badgeText: "بچه قشنگ" },
-  { id: "PesarBaba", name: "پسر بابا", color: "#0984e3", badgeText: "پسر بابا" },
-  { id: "MoallemMan", name: "معلم من", color: "#00b894", badgeText: "معلم من" },
-  { id: "BabaJoon", name: "بابا جون", color: "#fdcb6e", badgeText: "بابا جون" },
-  { id: "Pedaram", name: "پدرم", color: "#d63031", badgeText: "پدرم" },
-  { id: "Khakepakam", name: "خاک پاکم", color: "#a29bfe", badgeText: "خاک پاکم" },
-  { id: "Badbakht", name: "بدبخت", color: "#636e72", badgeText: "بدبخت" },
   { id: "PayamBazargani", name: "پیام بازرگانی", color: "#00cec9", badgeText: "پیام بازرگانی" },
-  { id: "ShabakePooya", name: "شبکه پویا", color: "#6c5ce7", badgeText: "شبکه پویا" },
-  { id: "PeykanVant", name: "پیکان وانت", color: "#fab1a0", badgeText: "پیکان وانت" },
-  { id: "SamandSoren", name: "سمند سورن", color: "#dfe6e9", badgeText: "سمند سورن" },
-  { id: "PejooMeshki", name: "پژو مشکی", color: "#2d3436", badgeText: "پژو مشکی" },
-  { id: "Pars", name: "پارس", color: "#ffeaa7", badgeText: "پارس" },
-  { id: "Pride", name: "پراید", color: "#b2bec3", badgeText: "پراید" },
-  { id: "Tiba", name: "تیبا", color: "#74b9ff", badgeText: "تیبا" },
-  { id: "Saina", name: "ساینا", color: "#81ecec", badgeText: "ساینا" },
-  { id: "Quick", name: "کوییک", color: "#ff7675", badgeText: "کوییک" },
-  { id: "Shahin", name: "شاهین", color: "#55efc4", badgeText: "شاهین" },
-  { id: "Tara", name: "تارا", color: "#ffeaa7", badgeText: "تارا" },
-  { id: "Dena", name: "دنا", color: "#fd79a8", badgeText: "دنا" },
-  { id: "Runna", name: "رانا", color: "#fab1a0", badgeText: "رانا" },
-  { id: "Arash", name: "آریسان", color: "#a29bfe", badgeText: "آریسان" },
-  { id: "Haima", name: "هایما", color: "#b2bec3", badgeText: "هایما" },
-  { id: "Fidelity", name: "فیدلیتی", color: "#00b894", badgeText: "فیدلیتی" },
-  { id: "NissanZamyad", name: "زامیاد", color: "#e17055", badgeText: "زامیاد" },
-  { id: "Khavar", name: "خاور", color: "#d63031", badgeText: "خاور" },
-  { id: "Benz", name: "بنز", color: "#dfe6e9", badgeText: "بنز" },
-  { id: "BMW", name: "بی ام و", color: "#0984e3", badgeText: "بی ام و" }
+  { id: "BMW", name: "بی ام و", color: "#0984e3", badgeText: "بی ام و" },
+  { id: "Kolahbardar", name: "کلاهبردار", color: "#800000", badgeText: "کلاهبردار" },
+  { id: "etemad", name: "اعتماد", color: "#0B6623", badgeText: "اعتماد" },
+
+  { id: "Poldar", name: "پولدار", color: "#FFF200", badgeText: "پولدار" },
 ];
 
 let gameData = { accounts: {}, messages: [], purchases: [], chat: [] };
@@ -438,7 +418,7 @@ const BOT_NAMES = [
     "ترانه", "امید", "نوید", "مهتاب", "سورنا", "تینا", "فرید", "نازنین", "آریا", "سها",
     "کیانا", "رستم", "پریسا", "مانی", "نیما", "شقایق", "آرش", "مهیار", "رویا", "بهنام",
     "سپیده", "کوروش", "آزاده", "سینا", "نگار", "فرزین", "مریم", "رهام", "الناز", "سام",
-    "پگاه", "رامین", "هلیا", "آرمین", "مهسا", "پارسا", "غزل", "کیان", "آیدا", "بردیا"
+    "پگاه", "رامین", "هلیا", "آرمین", "مهسا", "پارسا", "غزل", "کیان", "آیدا", "بردیا", "کسرا", "عامر", "عقیل", "سهیلا"
 ];
 
 function generateRandomPassword() {
